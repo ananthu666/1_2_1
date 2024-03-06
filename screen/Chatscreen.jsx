@@ -11,11 +11,11 @@ import supabase from "../supa";
 
 const ChatScreen = ({ route }) => {
   const flatListRef = useRef();
-  // write a function that run once only when page mount write
+
   const { s_id, r_id } = route.params;
-  console.log("!!!!!!!!!!!!!!!!!!!!");
-  console.log("s_id", s_id);
-  console.log("r_id", r_id);
+  // console.log("!!!!!!!!!!!!!!!!!!!!");
+  // console.log("s_id", s_id);
+  // console.log("r_id", r_id);
   // alert(s_id );
 
   const [messages, setMessages] = useState([]);
@@ -23,39 +23,50 @@ const ChatScreen = ({ route }) => {
   const [newMessage, setNewMessage] = useState("");
   const [sender, setsender] = useState(s_id);
   const [receiver, setreceiver] = useState(r_id);
+  const [contentSize, setContentSize] = useState(0);
+
   const fetchMessages = async () => {
     try {
       // Fetch messages for the current user
 
       const { data, error } = await supabase
-  .from("messages")
-  .select("id, sender_id, receiver_id, content, timestamp")
-  .or([
-    ['sender_id.eq.' + sender, 'receiver_id.eq.' + receiver],
-    ['sender_id.eq.' + receiver, 'receiver_id.eq.' + sender],
-  ])
-  
-  .order("timestamp", { ascending: true });
+        .from("messages")
+        .select("id, sender_id, receiver_id, content, timestamp")
 
+        .in("sender_id", [sender, receiver])
+        .in("receiver_id", [receiver, sender])
 
+        .order("timestamp", { ascending: true });
 
       if (error) {
         console.error("Error fetching messages:", error.message);
       } else {
         setMessages(data);
         setMessagelen(data.length);
-        flatListRef.current.scrollToEnd({ animated: true });
+        console.log("Messages fetched", messages);
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error.message);
     }
-    
   };
 
   useEffect(() => {
-    fetchMessages();
+    const fetchData = async () => {
+      try {
+        await fetchMessages();
+
+        console.log("Fetch messages completed");
+      } catch (error) {
+        console.error("Error fetching messages:", error.message);
+      }
+    };
+    fetchData();
+     
   }, [messages]);
 
+  useEffect(() => {
+    flatListRef.current.scrollToEnd({ animated: true });
+  }, [contentSize]);
 
   const sendMessage = async () => {
     if (newMessage.trim() === "") {
@@ -104,7 +115,6 @@ const ChatScreen = ({ route }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View
-          
             style={
               item.sender_id === sender
                 ? styles.userMessage
@@ -114,6 +124,9 @@ const ChatScreen = ({ route }) => {
             <Text>{item.content}</Text>
           </View>
         )}
+        onContentSizeChange={(contentWidth, contentHeight) => {
+          setContentSize(contentHeight);
+        }}
       />
 
       {/* Input Box */}
@@ -174,7 +187,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
-    
   },
 });
 

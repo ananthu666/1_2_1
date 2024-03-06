@@ -13,9 +13,83 @@ const UsersList = ({ navigation }) => {
   const [myid, setMid] = useState("");
   const [send_id, setSend_id] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [skipsRemaining, setSkipsRemaining] = useState(5);
+  const [skipsRemaining, setSkipsRemaining] = useState(0);
+  supabase.auth.onAuthStateChange((event, session) => {
+    // if signed in move to dash
+    if (event === "SIGNED_OUT") {
+      console.log("User signed in successfully");
+      navigation.navigate("Home");
+    }
+  });
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+  
+      if (error) {
+        console.error('Error logging out:', error.message);
+      } else {
+        alert('Logout successful');
+      }
+    } catch (error) {
+      console.error('Unexpected error during logout:', error);
+      // Handle any unexpected errors that might occur during the logout process
+    }
+  };
+  useEffect(() => {
+    // update count in db
+    const updateCount = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .update({ count: skipsRemaining })
+          .eq("username", send_id);
+        if (error) {
+          console.error("Error updating users:", error.message);
+        } else {
+          console.log("Users updated successfully:", data);
+        }
+      } catch (error) {
+        console.error("An unexpected error occurred:", error.message);
+      }
+    };
+    updateCount();
+  }, [skipsRemaining]);
+  const time_diff =async()=>{
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('datelogin,count')
+        .eq('username', send_id);
+      if (error) {
+        console.error("Error fetching users:", error.message);
+      }
+      else {
+        const date1 = new Date(data[0].datelogin);
+        const date2 = new Date();
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if(diffDays>1)
+        {
+          setSkipsRemaining(5);
+          const { data, error } = await supabase
+          .from('users')
+          .update({ datelogin: new Date(), count: 5})
+          .eq('username', send_id)
+          .select();
+        }
+        else
+          setSkipsRemaining(data[0].count);
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error.message);
+    }
+  }
 
-
+  
+  useEffect(() =>
+  {
+    time_diff();
+  },[send_id])
   
 
   useEffect(() => {
@@ -74,7 +148,7 @@ const UsersList = ({ navigation }) => {
   };
 
   const handleSkip = () => {
-    // Generate a random index
+    
     if (skipsRemaining === 0) return alert("No more skips remaining");
     if (skipsRemaining < 0) return alert("No more skips remaining");
     else {
@@ -87,21 +161,26 @@ const UsersList = ({ navigation }) => {
   };
 
   return (
+    <>
+       <Text style={styles.loginButton} onPress={logout}>Logout</Text>
+
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.userContainer}
         onPress={() => handleUserPress(users[currentIndex]?.username)}
       >
+
         <Text style={styles.userName}>{users[currentIndex]?.username}</Text>
         <Text style={styles.userEmail}>{users[currentIndex]?.email}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={{ color: "white" }}>
-          Skip to Next User ({skipsRemaining})
+          Skip to Next User   ({skipsRemaining})
         </Text>
       </TouchableOpacity>
     </View>
+    </>
   );
 };
 
@@ -115,7 +194,7 @@ const styles = StyleSheet.create({
   userContainer: {
     alignItems: "center",
     marginBottom: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: 4,
     paddingBottom: 8,
     borderBottomColor: "red",
   },
@@ -129,13 +208,34 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   skipButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#FF1493",
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
+    width: "50%",
+    alignSelf: "center",
+  },
+  loginButton: {
+    backgroundColor: "#FF1493",
+    borderRadius: 20,
+    // paddingVertical: 1,
+    // paddingHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    color: "white",
+    width: "25%",
+    height: "7%",
+    
+    padding: "3.5%",
+    alignSelf: "flex-end",
+    marginRight: 10,
+    fontSize: 18,
+
+    
   },
 });
 

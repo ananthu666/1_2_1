@@ -22,7 +22,7 @@ var Login =({navigation})=> {
   supabase.auth.onAuthStateChange((event, session) => {
     // if signed in move to dash
     if (event === "SIGNED_IN") {
-      console.log("User signed in successfully");
+      // alert("User signed in successfully");
       navigation.navigate("Dash");
     }
   });
@@ -65,20 +65,7 @@ var Login =({navigation})=> {
     
   };
 
-  const logout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
   
-      if (error) {
-        console.error('Error logging out:', error.message);
-      } else {
-        console.log('Logout successful');
-      }
-    } catch (error) {
-      console.error('Unexpected error during logout:', error);
-      // Handle any unexpected errors that might occur during the logout process
-    }
-  };
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={log} />
@@ -101,9 +88,9 @@ var Login =({navigation})=> {
         />
       </View>
 
-      <TouchableOpacity onPress={ logout}>
+      {/* <TouchableOpacity onPress={ logout}>
         <Text style={styles.forgot_button}>Forgot Password?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity style={{backgroundColor:"white"}} onPress={() => navigation.navigate('Register')}>
         <Text style={{color:"blue"} }>Sign Up</Text>
       </TouchableOpacity>
