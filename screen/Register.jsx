@@ -31,12 +31,12 @@ var Register =({navigation})=> {
         password,
         
       });
-      console.log("user", user);
-      console.log("session", session);
+      // console.log("user", user);
+      // console.log("session", session);
 
       // Check for errors
       if (error) {
-        console.error("Error signing up:", error.message);
+        alert("Error signing up:", error.message);
         // alert
       } else {
         
@@ -47,13 +47,13 @@ var Register =({navigation})=> {
         ])
         .select();
         
-        console.log("User registered successfully:", user);
-        console.log("Session details:", session);
+        alert("User registered successfully:", user);
+        // console.log("Session details:", session);
         // navigation.navigate("Home");
         // You may want to navigate to another screen or perform additional actions here
       }
     } catch (error) {
-      console.error("An unexpected error occurred:", error.message);
+      alert("An unexpected error occurred:", error.message);
       // Handle unexpected errors
     }
   };

@@ -57,8 +57,14 @@ var Login =({navigation})=> {
 
       // Check for errors
       // console.log(data);
+      if(data.user==null || data.user==undefined){
+        alert("Invalid credentials");
+      }
+      else{
+        alert("Login successful");
+      }
     } catch (error) {
-      console.error("An unexpected error occurred:", error.message);
+      alert("An unexpected error occurred:", error.message);
       alert(error.message);
       // Handle unexpected errors
     }
