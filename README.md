@@ -9,7 +9,7 @@ Welcome to the 1-to-1 Anonymous Chat App! This application allows you to connect
 ### Cloning the Repository
 1. Clone the repository to your local machine using Git:
     ```bash
-    git clone https://github.com/your-username/your-repository.git
+    git clone https://github.com/ananthu666/1_2_1.git
     ```
 
 ### Installation
