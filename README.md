@@ -1,4 +1,4 @@
-# User Manual: 1-to-1 Anonymous Chat App
+# One-to-One Anonymous Chat App
 
 Author: Ananthu Jayakumar
 
