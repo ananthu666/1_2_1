@@ -7,7 +7,7 @@ Welcome to the 1-to-1 Anonymous Chat App! This application allows you to connect
 
 ## Getting Started
 ### Installation
-- Install the APK file sent along with this manual.
+- Install the APK file sent.
 
 ### Creating an Account
 - Open the app and click on the "Sign Up" button on the login page.
