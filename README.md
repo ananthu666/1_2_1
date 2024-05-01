@@ -15,7 +15,7 @@ Welcome to the 1-to-1 Anonymous Chat App! This application allows you to connect
 ### Installation
 1. Navigate to the project directory:
     ```bash
-    cd your-repository
+    cd 1_2_1
     ```
 
 2. Install dependencies using npm or yarn:
